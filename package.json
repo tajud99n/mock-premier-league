@@ -1,0 +1,19 @@
+{
+  "name": "mock-premier-league",
+  "version": "1.0.0",
+  "description": "a mock football league system",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tajud99n/mock-premier-league.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tajud99n/mock-premier-league/issues"
+  },
+  "homepage": "https://github.com/tajud99n/mock-premier-league#readme"
+}
