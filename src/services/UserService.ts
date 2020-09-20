@@ -1,0 +1,30 @@
+/**
+ * UserService object.
+ * handles business logic relating to UserModel
+ */
+import { UserModel } from "../models/user";
+
+const UserService = {
+	async createUser(data: any) {
+		try {
+			const user = new UserModel(data);
+
+			await user.save();
+
+			return user;
+		} catch (error) {
+			throw error;
+		}
+	},
+
+	async getUserByEmail(email: string) {
+		try {
+			const user = await UserModel.findOne({ email: email });
+			return user;
+		} catch (error) {
+			throw error;
+		}
+	},
+};
+
+export default UserService;
