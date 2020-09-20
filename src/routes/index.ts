@@ -2,6 +2,8 @@ import { Request, Response, Router } from "express";
 import { http_responder } from "../utils/http_response";
 import { loginUser } from "../controllers/AuthController";
 import { newUser } from "../controllers/UserController";
+import AdminRouter from "./Admin";
+
 
 // Init router and path
 const router = Router();
@@ -15,6 +17,6 @@ router.use("/health", (req: Request, res: Response) => {
 
 router.post("/login", loginUser);
 router.post("/register", newUser);
-
+router.use("/admin", AdminRouter);
 // Export the base-router
 export default router;
