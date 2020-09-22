@@ -5,7 +5,6 @@ export interface TeamDoc extends Document {
 	teamId: string;
 	name: string;
 	manager: string;
-	emblem: string;
 	color: string;
 	stadium: string;
 	meta: any;
@@ -27,10 +26,6 @@ const teamSchema = new Schema(
 			type: String,
 			required: true,
 		},
-		emblem: {
-			type: String,
-			required: true,
-		},
 		color: {
 			type: String,
 			required: true,
@@ -40,19 +35,19 @@ const teamSchema = new Schema(
 			required: true,
 		},
 		meta: {
-			alias: {
+			nickname: {
 				type: String,
 			},
 			fixtures: [
 				{
 					type: Schema.Types.ObjectId,
-					ref: "fixtures",
+					ref: "fixture",
 				},
 			],
 		},
 		createdBy: {
 			type: Schema.Types.ObjectId,
-			ref: "admins",
+			ref: "admin",
 		},
 		isDeleted: {
 			type: Boolean,
@@ -63,6 +58,13 @@ const teamSchema = new Schema(
 		timestamps: true,
 	}
 );
+
+teamSchema.methods.toJSON = function () {
+	const obj = this.toObject();
+	delete obj._id;
+	delete obj.isDeleted;
+	return obj;
+};
 
 export const TeamModel: Model<TeamDoc> = model<TeamDoc>(
 	config.mongodb.collections.team,

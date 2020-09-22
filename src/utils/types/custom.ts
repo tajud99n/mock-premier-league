@@ -25,3 +25,13 @@ export interface IAdmin {
 	password: string;
 	role?: string;
 }
+
+export interface ITeam {
+	teamId: string;
+	name: string;
+	manager: string;
+	color: string;
+	stadium: string;
+	meta: any;
+	createdBy?: string;
+}

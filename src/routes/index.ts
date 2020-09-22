@@ -3,6 +3,7 @@ import { http_responder } from "../utils/http_response";
 import { loginUser } from "../controllers/AuthController";
 import { newUser } from "../controllers/UserController";
 import AdminRouter from "./Admin";
+import TeamRouter from "./Team";
 
 
 // Init router and path
@@ -18,5 +19,6 @@ router.use("/health", (req: Request, res: Response) => {
 router.post("/login", loginUser);
 router.post("/register", newUser);
 router.use("/admin", AdminRouter);
+router.use("/teams", TeamRouter);
 // Export the base-router
 export default router;
