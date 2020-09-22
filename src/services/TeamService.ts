@@ -60,6 +60,7 @@ const TeamService = {
 		try {
 			const team = await TeamModel.findOne({
 				teamId,
+				isDeleted: false,
 			});
 
 			return team;
@@ -71,7 +72,7 @@ const TeamService = {
 	async updateTeam(teamId: string, updateObject: any = {}) {
 		try {
 			const teamUpdate = await TeamModel.findOneAndUpdate(
-				{teamId},
+				{ teamId },
 				updateObject,
 				{ new: true }
 			)
@@ -79,6 +80,20 @@ const TeamService = {
 				.populate({ path: "meta.fixtures" });
 			return teamUpdate;
 		} catch (error) {
+			throw error;
+		}
+	},
+	
+	async updateTeamFixtures(id: string, updateObject: any) {
+		try {
+			const teamUpdate = await TeamModel.findByIdAndUpdate(
+				id,
+				{$set: {"meta.fixtures": updateObject}},
+				{ new: true }
+			);
+			return teamUpdate;
+		} catch (error) {
+			console.log(error)
 			throw error;
 		}
 	},

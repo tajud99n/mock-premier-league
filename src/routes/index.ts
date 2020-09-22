@@ -4,6 +4,7 @@ import { loginUser } from "../controllers/AuthController";
 import { newUser } from "../controllers/UserController";
 import AdminRouter from "./Admin";
 import TeamRouter from "./Team";
+import FixtureRouter from "./Fixture";
 
 
 // Init router and path
@@ -15,10 +16,12 @@ router.use("/health", (req: Request, res: Response) => {
 });
 
 // Add sub-routes
-
 router.post("/login", loginUser);
 router.post("/register", newUser);
 router.use("/admin", AdminRouter);
 router.use("/teams", TeamRouter);
+router.use("/fixtures", FixtureRouter);
+
+
 // Export the base-router
 export default router;

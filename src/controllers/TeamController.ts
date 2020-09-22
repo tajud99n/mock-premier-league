@@ -10,8 +10,8 @@ import { uuid } from "uuidv4";
 
 /**
  * newTeam
- * @desc A user should be able to create support Team
- * Route: POST: '/api/v1/Team'
+ * @desc An admin should be able to create a team
+ * Route: POST: '/api/v1/teams'
  * @param {Object} req request object
  * @param {Object} res response object
  * @returns {void|Object} object
@@ -203,7 +203,7 @@ export async function getAllTeams(req: any, res: Response) {
 
 /**
  * removeTeam
- * @desc An admin should remove a teams with the given id
+ * @desc An admin should remove a team with the given id
  * Route: DELETE: '/api/v1/teams'
  * @param {Object} req request object
  * @param {Object} res response object

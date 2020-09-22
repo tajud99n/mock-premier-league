@@ -104,6 +104,10 @@ const Utils = {
 
 		return data;
 	},
+
+	generateFixtureLink(str: string) {
+		return `${config.baseURL}/api/v1/fixtures/link/${str}`;
+	},
 };
 
 export default Utils;

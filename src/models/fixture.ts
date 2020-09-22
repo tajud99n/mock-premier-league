@@ -19,12 +19,14 @@ export interface FixtureDoc extends Document {
 const fixtureSchema = new Schema(
 	{
 		home: {
-			type: String,
+			type: Schema.Types.ObjectId,
 			required: true,
+			ref: "team",
 		},
 		away: {
-			type: String,
+			type: Schema.Types.ObjectId,
 			required: true,
+			ref: "team",
 		},
 		kickOff: {
 			type: Date,
@@ -43,9 +45,11 @@ const fixtureSchema = new Schema(
 			scores: {
 				home: {
 					type: Number,
+					default: null,
 				},
 				away: {
 					type: Number,
+					default: null,
 				},
 			},
 		},
@@ -55,7 +59,7 @@ const fixtureSchema = new Schema(
 		},
 		createdBy: {
 			type: Schema.Types.ObjectId,
-			ref: "admins",
+			ref: "admin",
 		},
 		status: {
 			type: String,

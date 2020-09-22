@@ -7,6 +7,7 @@ dotenv.config();
 
 interface IEnv {
 	appName: string;
+	baseURL: string;
 	port: number;
 	mongodb: IMongodb;
 	environment: string;
@@ -36,6 +37,7 @@ interface IJWT {
 
 const config: IEnv = {
 	appName: "mock premier league",
+	baseURL: process.env.BASE_URL!,
 	environment: process.env.NODE_ENV || "development",
 	port: Number(process.env.PORT),
 	mongodb: {
