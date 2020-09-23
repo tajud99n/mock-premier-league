@@ -35,7 +35,7 @@ export async function newTeam(req: IRequestAdmin, res: Response) {
 				httpCodes.BAD_REQUEST
 			);
 		}
-		
+
 		const createdBy = req.user?._id;
 		const teamObject: ITeam = {
 			name: req.body.name.toLowerCase(),
@@ -44,7 +44,7 @@ export async function newTeam(req: IRequestAdmin, res: Response) {
 			color: req.body.color.toLowerCase(),
 			stadium: req.body.stadium.toLowerCase(),
 			meta: {
-				nickname: (req.body.nickname) ? req.body.nickname.toLowerCase() : null,
+				nickname: req.body.nickname ? req.body.nickname.toLowerCase() : null,
 			},
 			createdBy,
 		};
@@ -125,24 +125,42 @@ export async function updateTeam(req: IRequestAdmin, res: Response) {
 
 		const team = await TeamService.checkTeamById(teamId);
 		if (!team) {
-			return http_responder.errorResponse(res, "team does not exist", httpCodes.NOT_FOUND);
+			return http_responder.errorResponse(
+				res,
+				"team does not exist",
+				httpCodes.NOT_FOUND
+			);
 		}
 
 		if (req.body.name) {
-			const existingTeam = await TeamService.findTeamByName(req.body.name.toLowerCase());
+			const existingTeam = await TeamService.findTeamByName(
+				req.body.name.toLowerCase()
+			);
 
 			if (existingTeam) {
-				return http_responder.errorResponse(res, "team already exists", httpCodes.BAD_REQUEST);
+				return http_responder.errorResponse(
+					res,
+					"team already exists",
+					httpCodes.BAD_REQUEST
+				);
 			}
 		}
 
 		const updateObject: any = {};
 
-		updateObject.name = (req.body.name) ? req.body.name.toLowerCase() : team.name;
-		updateObject.manager = (req.body.manager) ? req.body.manager.toLowerCase() : team.manager;
-		updateObject.color = (req.body.color) ? req.body.color.toLowerCase() : team.color;
-		updateObject.stadium = (req.body.stadium) ? req.body.stadium.toLowerCase() : team.stadium;
-		updateObject["meta.nickname"] = (req.body.nickname) ? req.body.nickname.toLowerCase() : team.meta.nickname;
+		updateObject.name = req.body.name ? req.body.name.toLowerCase() : team.name;
+		updateObject.manager = req.body.manager
+			? req.body.manager.toLowerCase()
+			: team.manager;
+		updateObject.color = req.body.color
+			? req.body.color.toLowerCase()
+			: team.color;
+		updateObject.stadium = req.body.stadium
+			? req.body.stadium.toLowerCase()
+			: team.stadium;
+		updateObject["meta.nickname"] = req.body.nickname
+			? req.body.nickname.toLowerCase()
+			: team.meta.nickname;
 		const updatedTeam = await TeamService.updateTeam(team._id, updateObject);
 		return http_responder.successResponse(
 			res,
@@ -170,6 +188,8 @@ export async function updateTeam(req: IRequestAdmin, res: Response) {
  */
 export async function getAllTeams(req: any, res: Response) {
 	try {
+		const { limit, page }: any = req.query;
+
 		const teams: any = await TeamService.getAllTeams();
 
 		if (!teams.length) {
@@ -180,9 +200,11 @@ export async function getAllTeams(req: any, res: Response) {
 			);
 		}
 
+		const result = await Utils.paginator(teams, limit, page);
+
 		return http_responder.successResponse(
 			res,
-			teams,
+			result,
 			"teams found",
 			httpCodes.OK
 		);
@@ -227,15 +249,26 @@ export async function removeTeam(req: any, res: Response) {
 }
 
 export async function search(req: Request, res: Response) {
-	const search: any = req.query.search;
 	try {
+		const search: any = req.query.search;
+		const { limit, page }: any = req.query;
+
 		const team = await TeamService.search(search);
 		const fixture = await FixtureService.search(search);
-		const results = [...team, ...fixture ]
+		const result = await Utils.paginator([...team, ...fixture], limit, page);
 
-		return http_responder.successResponse(res, { results }, "search results returned", httpCodes.OK);
+		return http_responder.successResponse(
+			res,
+			result,
+			"search results returned",
+			httpCodes.OK
+		);
 	} catch (error) {
 		logger.error(JSON.stringify(error));
-		return http_responder.errorResponse(res, "server error", httpCodes.INTERNAL_SERVER_ERROR);
+		return http_responder.errorResponse(
+			res,
+			"server error",
+			httpCodes.INTERNAL_SERVER_ERROR
+		);
 	}
 }

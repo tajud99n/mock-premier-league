@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { IRequestAdmin } from "../utils/types/custom";
 import httpCodes from "http-status-codes";
 import { http_responder } from "../utils/http_response";
-import moment from "moment";
 import FixtureService from "../services/FixtureService";
 import TeamService from "../services/TeamService";
 import Utils from "../utils/utils";
@@ -208,9 +207,11 @@ export async function getAllFixtures(req: any, res: Response) {
 				httpCodes.NOT_FOUND
 			);
 		}
+		const result = await Utils.paginator(fixtures, limit, page);
+
 		return http_responder.successResponse(
 			res,
-			{ fixtures },
+			result,
 			"fixtures found",
 			httpCodes.OK
 		);
