@@ -9,7 +9,7 @@ export const CreateTeamSchema = Joi.object({
 });
 
 export const UpdateTeamSchema = Joi.object({
-	nname: Joi.string(),
+	name: Joi.string(),
 	manager: Joi.string(),
 	color: Joi.string(),
 	stadium: Joi.string(),

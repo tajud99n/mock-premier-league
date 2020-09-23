@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ITeam, IRequestAdmin } from "../utils/types/custom";
 import TeamService from "../services/TeamService";
+import FixtureService from "../services/FixtureService";
 import httpCodes from "http-status-codes";
 import { logger } from "../config/logger";
 import { http_responder } from "../utils/http_response";
@@ -116,7 +117,6 @@ export async function getTeam(req: Request, res: Response) {
 export async function updateTeam(req: IRequestAdmin, res: Response) {
 	try {
 		const teamId = req.params.id;
-		const { comment, status } = req.body;
 
 		const errors = await Utils.validateRequest(req.body, UpdateTeamSchema);
 		if (errors) {
@@ -125,34 +125,29 @@ export async function updateTeam(req: IRequestAdmin, res: Response) {
 
 		const team = await TeamService.checkTeamById(teamId);
 		if (!team) {
-			const errMessage = "team does not exist";
-			return http_responder.errorResponse(res, errMessage, httpCodes.NOT_FOUND);
+			return http_responder.errorResponse(res, "team does not exist", httpCodes.NOT_FOUND);
 		}
 
 		if (req.body.name) {
-			const existingTeam = await TeamService.findTeamByName(req.body.team_name.toLowerCase());
+			const existingTeam = await TeamService.findTeamByName(req.body.name.toLowerCase());
+
 			if (existingTeam) {
-				const errMessage = 'team already exists';
-				return http_responder.errorResponse(res, errMessage, httpCodes.CONFLICT);
+				return http_responder.errorResponse(res, "team already exists", httpCodes.BAD_REQUEST);
 			}
 		}
-		const updateObject: any = {
-			name: req.body.team_name.toLowerCase(),
-			manager: (req.body.manager) ? req.body.manager.toLowerCase(): team.manager,
-			color: (req.body.color) ? req.body.color.toLowerCase(): team.color,
-			stadium: (req.body.stadium) ? req.body.stadium.toLowerCase(): team.stadium,
-			meta: {
-				nickname: (req.body.nickname) ? req.body.nickname.toLowerCase() : team.meta.nickname,
-			},
-		};
 
+		const updateObject: any = {};
+
+		updateObject.name = (req.body.name) ? req.body.name.toLowerCase() : team.name;
+		updateObject.manager = (req.body.manager) ? req.body.manager.toLowerCase() : team.manager;
+		updateObject.color = (req.body.color) ? req.body.color.toLowerCase() : team.color;
+		updateObject.stadium = (req.body.stadium) ? req.body.stadium.toLowerCase() : team.stadium;
+		updateObject["meta.nickname"] = (req.body.nickname) ? req.body.nickname.toLowerCase() : team.meta.nickname;
 		const updatedTeam = await TeamService.updateTeam(team._id, updateObject);
-
-		const message = "team updated successfully";
 		return http_responder.successResponse(
 			res,
 			{ team: updatedTeam },
-			message,
+			"team updated successfully",
 			httpCodes.OK
 		);
 	} catch (error) {
@@ -188,7 +183,7 @@ export async function getAllTeams(req: any, res: Response) {
 		return http_responder.successResponse(
 			res,
 			teams,
-			"Teams found",
+			"teams found",
 			httpCodes.OK
 		);
 	} catch (error) {
@@ -228,5 +223,19 @@ export async function removeTeam(req: any, res: Response) {
 			"server error",
 			httpCodes.INTERNAL_SERVER_ERROR
 		);
+	}
+}
+
+export async function search(req: Request, res: Response) {
+	const search: any = req.query.search;
+	try {
+		const team = await TeamService.search(search);
+		const fixture = await FixtureService.search(search);
+		const results = [...team, ...fixture ]
+
+		return http_responder.successResponse(res, { results }, "search results returned", httpCodes.OK);
+	} catch (error) {
+		logger.error(JSON.stringify(error));
+		return http_responder.errorResponse(res, "server error", httpCodes.INTERNAL_SERVER_ERROR);
 	}
 }

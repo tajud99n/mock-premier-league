@@ -57,6 +57,20 @@ const FixtureService = {
 		}
 	},
 
+	async findFixtureByMongoId(id: string) {
+		try {
+			const fixture = await FixtureModel.findOne({
+				_id: id,
+				isDeleted: false,
+			})
+				.populate({ path: "home", select: "name" })
+				.populate({ path: "away", select: "name" });
+			return fixture;
+		} catch (error) {
+			throw error;
+		}
+	},
+
 	async findFixtureById(fixtureId: string) {
 		try {
 			const fixture = await FixtureModel.findOne({
@@ -81,6 +95,7 @@ const FixtureService = {
 					$gte: new Date(query.startDate),
 					$lt: new Date(query.endDate),
 				},
+				isDeleted: false
 			})
 				.populate({ path: "home", select: "name" })
 				.populate({ path: "away", select: "name" })
@@ -115,7 +130,7 @@ const FixtureService = {
 		}
 	},
 
-	async checkFixtureStatus(fixtureId: string) {
+	async checkPendingFixture(fixtureId: string) {
 		try {
 			const fixture = await FixtureModel.findOne({
 				fixtureId,
@@ -126,6 +141,27 @@ const FixtureService = {
 			throw error;
 		}
 	},
+
+	async search(str: string) {
+		try {
+			const result = await FixtureModel.find({
+				$or: [
+					{
+						venue: {
+							$regex: str,
+							$options: 'i',
+						},
+					},
+				],
+			})
+				.populate('home')
+				.populate('away');
+			return result;
+		} catch (error) {
+			throw error;
+		}
+	}
 };
+
 
 export default FixtureService;

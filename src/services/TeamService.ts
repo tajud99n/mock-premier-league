@@ -62,38 +62,34 @@ const TeamService = {
 				teamId,
 				isDeleted: false,
 			});
-
 			return team;
 		} catch (error) {
 			throw error;
 		}
 	},
 
-	async updateTeam(teamId: string, updateObject: any = {}) {
+	async updateTeam(id: string, updateObject: any) {
 		try {
-			const teamUpdate = await TeamModel.findOneAndUpdate(
-				{ teamId },
-				updateObject,
+			const teamUpdate = await TeamModel.findByIdAndUpdate(
+				id,
+				{ $set: updateObject },
 				{ new: true }
-			)
-				.populate({ path: "userId", select: "name email" })
-				.populate({ path: "meta.fixtures" });
+			);
 			return teamUpdate;
 		} catch (error) {
 			throw error;
 		}
 	},
-	
+
 	async updateTeamFixtures(id: string, updateObject: any) {
 		try {
 			const teamUpdate = await TeamModel.findByIdAndUpdate(
 				id,
-				{$set: {"meta.fixtures": updateObject}},
+				{ $set: { "meta.fixtures": updateObject } },
 				{ new: true }
 			);
 			return teamUpdate;
 		} catch (error) {
-			console.log(error)
 			throw error;
 		}
 	},
@@ -108,6 +104,37 @@ const TeamService = {
 			);
 
 			return teamUpdate;
+		} catch (error) {
+			throw error;
+		}
+	},
+
+	async search(str: string) {
+		try {
+			const result = await TeamModel.find({
+				$or: [
+					{
+						name: {
+							$regex: str,
+							$options: "i",
+						},
+					},
+					{
+						stadium: {
+							$regex: str,
+							$options: "i",
+						},
+					},
+					{
+						manager: {
+							$regex: str,
+							$options: "i",
+						},
+					},
+				],
+			}).populate("fixtures");
+
+			return result;
 		} catch (error) {
 			throw error;
 		}

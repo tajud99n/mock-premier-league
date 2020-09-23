@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { http_responder } from "../utils/http_response";
 import { loginUser } from "../controllers/AuthController";
 import { newUser } from "../controllers/UserController";
+import { search } from "../controllers/TeamController";
 import AdminRouter from "./Admin";
 import TeamRouter from "./Team";
 import FixtureRouter from "./Fixture";
@@ -21,7 +22,7 @@ router.post("/register", newUser);
 router.use("/admin", AdminRouter);
 router.use("/teams", TeamRouter);
 router.use("/fixtures", FixtureRouter);
-
+router.get('/search', search);
 
 // Export the base-router
 export default router;

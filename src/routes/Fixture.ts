@@ -5,9 +5,10 @@ import { authToken, authAdmin } from "../middlewares/Auth";
 const router = Router();
 
 router.post("/", authToken, authAdmin, FixtureController.newFixture);
-router.get("/", authToken, authAdmin, FixtureController.getAllFixtures);
-router.get("/:id", authToken, FixtureController.getFixture);
-// router.put("/:id", authToken, authAdmin, FixtureController.updateFixture);
+router.get("/", authToken, FixtureController.getAllFixtures);
+router.get("/link/:id", authToken, FixtureController.getFixture);
+router.get("/:id", authToken, authAdmin, FixtureController.getFixtureAdmin);
+router.put("/:id", authToken, authAdmin, FixtureController.updateFixture);
 router.delete("/:id", authToken, authAdmin, FixtureController.removeFixture);
 
 

@@ -8,6 +8,6 @@ const router = Router();
 
 router.post("/register", AdminController.newAdmin);
 router.post("/login", AuthController.loginAdmin);
-router.get("/fixture/:id", authToken, authAdmin, FixtureController.getFixture);
+router.get("/fixture/:id", authToken, authAdmin, FixtureController.getFixtureAdmin);
 
 export default router;
