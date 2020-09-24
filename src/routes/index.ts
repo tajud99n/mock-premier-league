@@ -6,6 +6,7 @@ import { search } from "../controllers/TeamController";
 import AdminRouter from "./Admin";
 import TeamRouter from "./Team";
 import FixtureRouter from "./Fixture";
+import { cachedSearch } from "../middlewares/Cache";
 
 
 // Init router and path
@@ -22,7 +23,7 @@ router.post("/register", newUser);
 router.use("/admin", AdminRouter);
 router.use("/teams", TeamRouter);
 router.use("/fixtures", FixtureRouter);
-router.get('/search', search);
+router.get('/search', cachedSearch, search);
 
 // Export the base-router
 export default router;

@@ -52,6 +52,8 @@ export async function newTeam(req: IRequestAdmin, res: Response) {
 		// save Team
 		const team = await TeamService.createTeam(teamObject);
 
+		Utils.removeDataFromCache("teams");
+
 		return http_responder.successResponse(
 			res,
 			{ team },
@@ -89,6 +91,8 @@ export async function getTeam(req: Request, res: Response) {
 				httpCodes.NOT_FOUND
 			);
 		}
+
+		Utils.addDataToCache(teamId, team);
 
 		return http_responder.successResponse(
 			res,
@@ -162,6 +166,9 @@ export async function updateTeam(req: IRequestAdmin, res: Response) {
 			? req.body.nickname.toLowerCase()
 			: team.meta.nickname;
 		const updatedTeam = await TeamService.updateTeam(team._id, updateObject);
+
+		Utils.removeDataFromCache(teamId);
+
 		return http_responder.successResponse(
 			res,
 			{ team: updatedTeam },
@@ -200,6 +207,8 @@ export async function getAllTeams(req: any, res: Response) {
 			);
 		}
 
+		Utils.addDataToCache("teams", teams);
+
 		const result = await Utils.paginator(teams, limit, page);
 
 		return http_responder.successResponse(
@@ -232,6 +241,8 @@ export async function removeTeam(req: any, res: Response) {
 
 		const team: any = await TeamService.removeTeam(teamId);
 
+		Utils.removeDataFromCache(teamId);
+
 		return http_responder.successResponse(
 			res,
 			[],
@@ -255,6 +266,9 @@ export async function search(req: Request, res: Response) {
 
 		const team = await TeamService.search(search);
 		const fixture = await FixtureService.search(search);
+
+		Utils.addDataToCache(search, [...team, ...fixture]);
+
 		const result = await Utils.paginator([...team, ...fixture], limit, page);
 
 		return http_responder.successResponse(

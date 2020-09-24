@@ -13,6 +13,7 @@ interface IEnv {
 	environment: string;
 	jwt: IJWT;
 	salt: number;
+	redis: any;
 }
 
 interface IMongodb {
@@ -57,6 +58,10 @@ const config: IEnv = {
 		alg: process.env.JWT_ALG!,
 	},
 	salt: Number(process.env.SALT_ROUND)!,
+	redis: {
+		host: process.env.REDIS_HOST!,
+		port: Number(process.env.REDIS_PORT)!,
+	},
 };
 
 export { config };

@@ -87,11 +87,18 @@ export async function newFixture(req: IRequestAdmin, res: Response) {
 		await TeamService.updateTeamFixtures(home._id, homeFixtures);
 		await TeamService.updateTeamFixtures(away._id, awayFixtures);
 
+		Utils.removeDataFromCache("fixtures:all");
+		Utils.removeDataFromCache("fixtures:pending");
+		Utils.removeDataFromCache("teams");
+		Utils.removeDataFromCache(`${home.teamId}`);
+		Utils.removeDataFromCache(`${away.teamId}`);
+		Utils.removeDataFromCache("teams");
+
 		return http_responder.successResponse(
 			res,
 			{ fixture },
 			"fixture created successfully",
-			httpCodes.OK
+			httpCodes.CREATED
 		);
 	} catch (error) {
 		logger.error(JSON.stringify(error));
@@ -123,6 +130,9 @@ export async function getFixtureAdmin(req: Request, res: Response) {
 				httpCodes.NOT_FOUND
 			);
 		}
+
+		Utils.addDataToCache(fixtureId, fixture);
+
 		return http_responder.successResponse(
 			res,
 			{ fixture },
@@ -159,6 +169,9 @@ export async function getFixture(req: Request, res: Response) {
 				httpCodes.NOT_FOUND
 			);
 		}
+
+		Utils.addDataToCache(fixtureId, fixture);
+
 		return http_responder.successResponse(
 			res,
 			{ fixture },
@@ -207,6 +220,10 @@ export async function getAllFixtures(req: any, res: Response) {
 				httpCodes.NOT_FOUND
 			);
 		}
+
+		const status = req.query.status ? req.query.status : "all";
+		Utils.addDataToCache(`fixtures:${status}`, fixtures);
+
 		const result = await Utils.paginator(fixtures, limit, page);
 
 		return http_responder.successResponse(
@@ -295,6 +312,8 @@ export async function updateFixture(req: IRequestAdmin, res: Response) {
 			fixtureObject
 		);
 
+		Utils.removeDataFromCache(fixtureId);
+
 		const message = "Fixture updated successfully";
 		return http_responder.successResponse(
 			res,
@@ -335,6 +354,8 @@ export async function removeFixture(req: IRequestAdmin, res: Response) {
 		}
 
 		const response = await FixtureService.removeFixture(fixtureId);
+
+		Utils.removeDataFromCache(fixtureId);
 
 		return http_responder.successResponse(
 			res,

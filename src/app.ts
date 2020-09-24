@@ -6,6 +6,7 @@ import { http_responder } from "./utils/http_response";
 import BaseRouter from "./routes";
 import { logger } from "./config/logger";
 import { connectDB } from "./config/db";
+import redisClient from "./config/redis";
 
 // Init express
 const app: Application = express();
