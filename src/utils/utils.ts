@@ -101,7 +101,6 @@ const Utils = {
 		}
 		data.result = dataArray.slice(startIndex, endIndex);
 		data.count = dataArray.length;
-
 		return data;
 	},
 
@@ -116,7 +115,8 @@ const Utils = {
 	},
 
 	addDataToCache(str: string, data: any, duration: number = 3600) {
-		console.log("ADDED", JSON.stringify(data));
+		console.log("FLAG",str);
+		console.log("ADDED", data.length);
 		redisClient.setex(str, duration, JSON.stringify(data));
 	},
 

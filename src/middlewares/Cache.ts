@@ -19,7 +19,6 @@ export const cachedFixtures = (
 ) => {
 	try {
         const status = req.query.status ? req.query.status : "all";
-        console.log("STATUS", status);
 		redisClient.get(`fixtures:${status}`, async (err: any, fixtures: any) => {
 			if (err) throw err;
 			if (fixtures) {
@@ -30,7 +29,6 @@ export const cachedFixtures = (
 					parseInt(limit),
 					parseInt(page)
 				);
-                console.log("RESULT", result);
 				return http_responder.successResponse(
 					res,
 					result,
@@ -143,17 +141,16 @@ export const cachedTeams = async (
 	next: NextFunction
 ) => {
 	try {
-		redisClient.get(`teams`, async (err: any, teams: any) => {
+		redisClient.get("teams", async (err: any, teams: any) => {
 			if (err) throw err;
 			if (teams) {
-				const { limit, page } = req.query;
-				const dataArray = JSON.parse(teams);
+                const { limit, page } = req.query;
+                const dataArray = JSON.parse(teams);
 				const result = await Utils.paginator(
 					dataArray,
 					parseInt(limit),
 					parseInt(page)
 				);
-
 				return http_responder.successResponse(
 					res,
 					result,

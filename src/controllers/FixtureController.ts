@@ -222,7 +222,6 @@ export async function getAllFixtures(req: any, res: Response) {
 		}
 
 		const status = req.query.status ? req.query.status : "all";
-		console.log("METHHHH", status);
 		Utils.addDataToCache(`fixtures:${status}`, fixtures);
 
 		const result = await Utils.paginator(fixtures, limit, page);
