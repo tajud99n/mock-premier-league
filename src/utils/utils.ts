@@ -105,6 +105,12 @@ const Utils = {
 		return data;
 	},
 
+	/**
+	 * generateFixtureLink
+	 * @desc a builder for generating a url
+	 * @param {string} str
+	 * @returns {string} 
+	 */
 	generateFixtureLink(str: string) {
 		return `${config.baseURL}/api/v1/fixtures/link/${str}`;
 	},
