@@ -18,7 +18,8 @@ export const cachedFixtures = (
 	next: NextFunction
 ) => {
 	try {
-		const status = req.query.status ? req.query.status : "all";
+        const status = req.query.status ? req.query.status : "all";
+        console.log("STATUS", status);
 		redisClient.get(`fixtures:${status}`, async (err: any, fixtures: any) => {
 			if (err) throw err;
 			if (fixtures) {
@@ -29,7 +30,7 @@ export const cachedFixtures = (
 					parseInt(limit),
 					parseInt(page)
 				);
-
+                console.log("RESULT", result);
 				return http_responder.successResponse(
 					res,
 					result,

@@ -8,7 +8,6 @@ import bcrypt from "bcryptjs";
 import Joi from "@hapi/joi";
 import redisClient from "../config/redis";
 
-
 const Utils = {
 	/**
 	 * hashPassword
@@ -110,19 +109,20 @@ const Utils = {
 	 * generateFixtureLink
 	 * @desc a builder for generating a url
 	 * @param {string} str
-	 * @returns {string} 
+	 * @returns {string}
 	 */
 	generateFixtureLink(str: string) {
 		return `${config.baseURL}/api/v1/fixtures/link/${str}`;
 	},
 
 	addDataToCache(str: string, data: any, duration: number = 3600) {
-		redisClient.setex(`tickets:${status}`, duration, JSON.stringify(data));
+		console.log("ADDED", JSON.stringify(data));
+		redisClient.setex(str, duration, JSON.stringify(data));
 	},
-	
+
 	removeDataFromCache(str: string) {
 		redisClient.del(str);
-	}
+	},
 };
 
 export default Utils;
