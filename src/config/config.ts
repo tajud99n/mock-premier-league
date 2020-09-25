@@ -62,8 +62,7 @@ const config: IEnv = {
 	},
 	salt: Number(process.env.SALT_ROUND)!,
 	redis: {
-		host: process.env.REDIS_HOST!,
-		port: Number(process.env.REDIS_PORT)!,
+		url: process.env.REDIS_URL!,
 	},
 	windowSizeInHours: Number(process.env.WINDOW_SIZE_IN_HOURS),
 	maxWindowRequestCount: Number(process.env.MAX_WINDOW_REQUEST_COUNT),

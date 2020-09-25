@@ -6,7 +6,7 @@ import redis from "redis";
 import { config } from "./config";
 import { logger } from "./logger";
 
-const redisClient = redis.createClient(config.redis.port, config.redis.host);
+const redisClient = redis.createClient(config.redis.url);
 
 redisClient.on("connect", function () {
 	logger.info("Connection to redis has been established successfully.");
