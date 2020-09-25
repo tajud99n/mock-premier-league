@@ -14,6 +14,9 @@ interface IEnv {
 	jwt: IJWT;
 	salt: number;
 	redis: any;
+	windowSizeInHours: number;
+	maxWindowRequestCount: number;
+	windowLogInterval: number,
 }
 
 interface IMongodb {
@@ -62,6 +65,9 @@ const config: IEnv = {
 		host: process.env.REDIS_HOST!,
 		port: Number(process.env.REDIS_PORT)!,
 	},
+	windowSizeInHours: Number(process.env.WINDOW_SIZE_IN_HOURS),
+	maxWindowRequestCount: Number(process.env.MAX_WINDOW_REQUEST_COUNT),
+	windowLogInterval: Number(process.env.WINDOW_LOG_INTERVAL_IN_HOURS),
 };
 
 export { config };

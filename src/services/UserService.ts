@@ -25,6 +25,15 @@ const UserService = {
 			throw error;
 		}
 	},
+
+	async checkIfUserExist(id: string) {
+		try {
+			const user = await UserModel.findOne({ _id: id, isDeleted: false });
+			return user;
+		} catch (error) {
+			throw error;
+		}
+	},
 };
 
 export default UserService;

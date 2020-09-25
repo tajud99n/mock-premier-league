@@ -56,6 +56,22 @@ describe("Team", async() => {
 				.expect(400)
 				.end(done);
 		});
+
+		it("should not allow a non admin to create a new team", (done) => {
+			const team = {
+				name: "this is a test",
+				manager: "test",
+				stadium: "dev",
+				color: "white",
+			};
+
+			request(app)
+				.post("/api/v1/teams")
+				.set("Authorization", `bearer ${user.body.data.token}`)
+				.send(team)
+				.expect(401)
+				.end(done);
+		});
 	});
 
 	describe("GET Team", () => {
@@ -70,7 +86,7 @@ describe("Team", async() => {
 				.end(done);
 		});
 
-		it("should return all teams", (done) => {
+		it("should return all teams (User)", (done) => {
 			request(app)
 				.get("/api/v1/teams/")
 				.set("Authorization", `bearer ${user.body.data.token}`)
@@ -78,6 +94,22 @@ describe("Team", async() => {
 				.expect((res) => {
 					expect(res.body.data.result).toHaveLength(3);
 				})
+				.end(done);
+		});
+
+		it("should return a team created by an admin to the admin", (done) => {
+			request(app)
+				.get(`/api/v1/admin/team/${teams[1].teamId}`)
+				.set("Authorization", `bearer ${admin.body.data.token}`)
+				.expect(200)
+				.end(done);
+		});
+
+		it("should return all teams (Admin)", (done) => {
+			request(app)
+				.get("/api/v1/admin/teams")
+				.set("Authorization", `bearer ${admin.body.data.token}`)
+				.expect(200)
 				.end(done);
 		});
 	});
@@ -97,6 +129,18 @@ describe("Team", async() => {
 				})
 				.end(done);
 		});
+
+		it("should not allow a user to update a team", (done) => {
+			const update = {
+				nickname: "boys boys",
+			};
+			request(app)
+				.put(`/api/v1/teams/${teams[1].teamId}`)
+				.set("Authorization", `bearer ${user.body.data.token}`)
+				.send(update)
+				.expect(401)
+				.end(done);
+		});
 	});
 
 	describe("Remove Team", () => {
@@ -107,6 +151,14 @@ describe("Team", async() => {
 				.expect(200)
 				.end(done);
 		});
+
+		it("should not allow a user remove a team", (done) => {
+			request(app)
+				.delete(`/api/v1/teams/${teams[2].teamId}`)
+				.set("Authorization", `bearer ${user.body.data.token}`)
+				.expect(401)
+				.end(done);
+		});
 	});
 
 	describe("SEARCH", () => {
@@ -114,9 +166,6 @@ describe("Team", async() => {
 			request(app)
 				.get(`/api/v1/search?search=abuja`)
 				.expect(200)
-				.expect((res) => {
-					expect(res.body.data.result).toHaveLength(2);
-				})
 				.end(done);
 		});
 	});

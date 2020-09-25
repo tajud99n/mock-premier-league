@@ -1,6 +1,8 @@
 import request from "supertest";
 import { app } from "../../app";
 import {
+	users,
+	seedUsers,
 	admin,
 	seedAdmin,
 	teams,
@@ -10,16 +12,20 @@ import {
 } from "../seed/seed";
 
 beforeEach(async function () {
+	await seedUsers();
 	await seedAdmin();
 	await seedTeams();
 	await seedFixtures();
 });
 
 describe("Fixture", async() => {
+	let user: any;
 	let admin: any;
 	beforeEach(async () => {
+		user = await loginUser();
 		admin = await loginAdmin();
 	});
+
 	describe("POST: create a fixture", () => {
 		it("should create a new fixture when an authenticated admin try to create", (done) => {
 			const fixture = {
@@ -50,13 +56,28 @@ describe("Fixture", async() => {
 				.expect(400)
 				.end(done);
 		});
+
+		it("should not allow a user to create a new fixture", (done) => {
+			const fixture = {
+				home: teams[0].teamId,
+				away: teams[2].teamId,
+				kick_off: "2020-01-10",
+			};
+
+			request(app)
+				.post("/api/v1/fixtures")
+				.set("Authorization", `bearer ${user.body.data.token}`)
+				.send(fixture)
+				.expect(401)
+				.end(done);
+		});
 	});
 
 	describe("GET Fixture", () => {
 		it("should return a fixture", (done) => {
 			request(app)
-				.get(`/api/v1/fixtures/${fixtures[1]._id}`)
-				.set("Authorization", `bearer ${admin.body.data.token}`)
+				.get(`/api/v1/fixtures/${fixtures[1].fixtureId}`)
+				.set("Authorization", `bearer ${user.body.data.token}`)
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.data.fixture.fixtureId).toBe(fixtures[1].fixtureId);
@@ -67,7 +88,7 @@ describe("Fixture", async() => {
 		it("should return all fixtures", (done) => {
 			request(app)
 				.get("/api/v1/fixtures")
-				.set("Authorization", `bearer ${admin.body.data.token}`)
+				.set("Authorization", `bearer ${user.body.data.token}`)
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.data.result).toHaveLength(fixtures.length);
@@ -77,8 +98,8 @@ describe("Fixture", async() => {
 
 		it("should return all completed fixtures", (done) => {
 			request(app)
-				.get("/api/v1/fixtures?status=completed")
-				.set("Authorization", `bearer ${admin.body.data.token}`)
+				.get("/api/v1/fixtures?status=completed&limit=5&page=1")
+				.set("Authorization", `bearer ${user.body.data.token}`)
 				.expect(200)
 				.expect((res) => {
 					expect(res.body.data.result).toHaveLength(1);
@@ -120,5 +141,12 @@ async function loginAdmin() {
 	return request(app).post("/api/v1/admin/login").send({
 		email: admin[0].email,
 		password: admin[0].password,
+	});
+}
+
+async function loginUser() {
+	return request(app).post("/api/v1/login").send({
+		email: users[0].email,
+		password: users[0].password,
 	});
 }

@@ -115,8 +115,6 @@ const Utils = {
 	},
 
 	addDataToCache(str: string, data: any, duration: number = 3600) {
-		console.log("FLAG",str);
-		console.log("ADDED", data.length);
 		redisClient.setex(str, duration, JSON.stringify(data));
 	},
 
