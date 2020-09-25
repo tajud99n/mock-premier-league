@@ -32,7 +32,15 @@ $ npm install
 $ npm run dev
 ```
 
+With docker
 
+```sh
+$ docker build -t <image name>
+```
+
+```sh
+$ docker-compose up
+```
 
 
 ### Test
