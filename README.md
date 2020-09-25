@@ -35,7 +35,7 @@ $ npm run dev
 With docker
 
 ```sh
-$ docker build -t <image name>
+$ docker build -t <image name> .
 ```
 
 ```sh
